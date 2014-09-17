@@ -424,3 +424,7 @@ body {
 	padding-left: 15px;
 	padding-right: 15px;
 }
+
+#page-header{ 
+	border-bottom: 0 !important;
+}
