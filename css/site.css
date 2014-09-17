@@ -419,3 +419,8 @@ body {
 .row{ 
 	margin-top: 15px;
 }
+
+.nav>li>a {
+	padding-left: 15px;
+	padding-right: 15px;
+}
