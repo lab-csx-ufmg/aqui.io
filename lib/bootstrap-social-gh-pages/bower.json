@@ -1,0 +1,16 @@
+{
+  "name": "bootstrap-social",
+  "main": "bootstrap-social.css",
+  "licence": "MIT",
+  "ignore": [
+    "assets",
+    "index.html",
+    "LICENCE"
+  ],
+  "dependencies": {
+    "bootstrap": "~3"
+  },
+  "devDependencies": {
+    "font-awesome": "~4"
+  }
+}
