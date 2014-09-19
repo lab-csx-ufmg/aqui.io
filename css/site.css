@@ -136,6 +136,7 @@ body {
 #map-canvas {
 	height: 400px;
 	width: 100%;
+	margin-top: 50px;
 }
 
 .info-pretitle {
@@ -353,10 +354,25 @@ body {
 .logo-img {
 	width: 100%;
 	max-width: 500px;
+
+}
+.logo-img-side{
+	width: 100%;
+	max-width: 200px;
+	float:left;
+}
+
+.logo-img-side-div{
+	width:100%;
 }
 
 #address {
 	margin-top: 15px;
+}
+
+#addressSide{
+	width: 445px;
+	float: left;
 }
 
 .btnSearch {
@@ -369,16 +385,24 @@ body {
 }
 
 .address-column{
-	padding-left: 100px;
-	padding-right: 100px;
+	width: 100%;
+	padding-left: 0px;
+	padding-right: 0px;
+	/*float:left;*/
+}
+
+#btnSearchSide{
+	margin-top: 1px;
+	float: right;
+
 }
 
 #shortener-url {
   	background-color: #f5f5f5;
   	/*margin-left: 750px;*/
-    margin-top: 4px;
+    margin-top: 3px;
     border: 1px solid #ebebeb;
-    position: relative;
+    /*position: relative;*/
     text-align: center;
     padding-left: 95px;
 	padding-right: 80px;
@@ -388,16 +412,16 @@ body {
 
 #label-shortener-url {
 	width: 80%; 
-	margin-top: 15px;
+	margin-top: 100px;
     /*margin-left: 640px;*/
     font-size: small;
-    position: relative;
+    /*position: relative;*/
     text-align: left;
     font-weight: bold;
    
     /*width: 350px;*/
     /*height: 20px*/
-    /*top: 10%;*/
+    
 }
 
 .theme-dropdown .dropdown-menu {

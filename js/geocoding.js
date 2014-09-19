@@ -598,7 +598,7 @@ function addDivUrl (geoHash){
         label_url = document.createElement('div');
         label_url.setAttribute("id", "label-shortener-url");
 
-        label_url.innerHTML = "Press CTRL-C to copy";
+        label_url.innerHTML = "Click and press CTRL-C to copy";
 
         shortenerurl = document.createElement('div');
         shortenerurl.setAttribute("id", "shortener-url");
@@ -610,18 +610,18 @@ function addDivUrl (geoHash){
         document.getElementById('column-search').appendChild(shortenerurl);      
     } else {
 
-        var label = document.createElement('div');
-        label.setAttribute("id", "label-shortener-url");
-        label.innerHTML = "Press CTRL-C to copy";
+        var label_url = document.createElement('div');
+        label_url.setAttribute("id", "label-shortener-url");
+        label_url.innerHTML = "Click and press CTRL-C to copy";
 
-        var el = document.createElement('div');
-        el.setAttribute("id", "shortener-url");
+        var shortenerurl = document.createElement('div');
+        shortenerurl.setAttribute("id", "shortener-url");
         //el.innerHTML = "onclick='selectText(\"shortener-url\");'";
 
-        el.innerHTML = "<h3 align = 'center'  class='navbar-text' onclick='selectText(\"shortener-url\");'> http://aqui.io/" + geoHash +"</h3>";
+        shortenerurl.innerHTML = "<h3 align = 'center'  class='navbar-text' onclick='selectText(\"shortener-url\");'> http://aqui.io/" + geoHash +"</h3>";
         //var geoHash = el.innerHTML = "<a target = \"_blank\" href=\"http://geohash.org/"+ geoHash +"\"><h3>http://geohash.org/"+geoHash+"</h3></a>";
-        document.getElementById('column-search').appendChild(label);  
-        document.getElementById('column-search').appendChild(el);
+        document.getElementById('column-search').appendChild(label_url);  
+        document.getElementById('column-search').appendChild(shortenerurl);
 
     }
 
