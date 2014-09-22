@@ -59,14 +59,17 @@
 
 		<div class="row">
 
-			<div id = "column-search" class="col-lg-6"  hidden>
-				<div>
-					<div class = "logo-img-side-bar"><img class="logo-img-side" src="img/logo2.jpg"></div>
-					<input id="addressSide" type="text" class="form-control" name="address">
-					<button id="btnSearchSide" class="btn btn-md btn-primary btnSearch" type="button" onClick="geocodingAddress(this.id);">
-						<span class="glyphicon glyphicon-search"></span>
-					</button>
-				</div>	
+			<div id = "column-search" class="col-lg-6" hidden>
+				<div class = "logo-img-side-bar"><img class="logo-img-side" src="img/logo2.jpg"></div>
+				<div class="input-group">
+  					<input id="addressSide" name="address" type="text" class="form-control">
+  					<span class="input-group-btn">
+						<button id="btnSearchSide" class="btn btn-primary" type="button" onClick="geocodingAddress(this.id);">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+					</span>	
+				</div>
+
 			</div>
  
 			<div class="col-lg-6" >
