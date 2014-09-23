@@ -53,7 +53,7 @@
 	<div class="container">
 		<div id = "page-header" class="page-header">
 			<img class="logo-img" src="img/logo2.jpg"/>
-            <div class="address-header"><input id="addressTop" type="text" class="form-control" name="address"></div>
+            <div class="address-header"><input id="addressTop" type="text" class="form-control" name="address" onkeydown="if (event.keyCode == 13) geocodingAddress('btnSearchTop');"></div>
 			<button id="btnSearchTop" class="btn btn-sm btn-primary btnSearch" type="button" onClick="geocodingAddress(this.id);">search</button>
 		</div>
 
@@ -62,7 +62,7 @@
 			<div id = "column-search" class="col-lg-6" hidden>
 				<div class = "logo-img-side-bar"><img class="logo-img-side" src="img/logo2.jpg"></div>
 				<div class="input-group">
-  					<input id="addressSide" name="address" type="text" class="form-control">
+  					<input id="addressSide" name="address" type="text" class="form-control" onkeydown="if (event.keyCode == 13) geocodingAddress('btnSearchSide');">
   					<span class="input-group-btn">
 						<button id="btnSearchSide" class="btn btn-primary" type="button" onClick="geocodingAddress(this.id);">
 							<span class="glyphicon glyphicon-search"></span>
