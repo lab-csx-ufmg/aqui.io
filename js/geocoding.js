@@ -534,26 +534,6 @@ function selectText(divID) //divID contains actual id of ‘div’ element
     }
 }
 
- /*function initialize(lat, lon) {
-        var mapOptions = {
-          //center: new google.maps.LatLng(-34.397, 150.644),
-          center: new google.maps.LatLng(parseFloat(lat), parseFloat(lon)),
-          zoom: 5
-          //mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-
-        //console.log(lat);
-        //console.log(lon);
-        var myCenter=new google.maps.LatLng(parseFloat(lat), parseFloat(lon));
-        var marker = google.maps.Marker({
-            position:myCenter,
-        });
-
-        var map = new google.maps.Map(document.getElementById("map-canvas"),
-            mapOptions);
-
-        marker.setMap(map);
-      }*/
       
 
     function initialize(lat, lon)
@@ -575,84 +555,70 @@ function selectText(divID) //divID contains actual id of ‘div’ element
     }
 
 
-function addDivUrl (geoHash){
-    document.getElementById("page-header").setAttribute("hidden", true);
-    document.getElementById("column-search").removeAttribute("hidden");
-    document.getElementById("map-canvas").removeAttribute("hidden");
 
-    if (document.getElementById("shortener-url") ) {
-        var label_url = document.getElementById("label-shortener-url");
-        var shortenerurl = document.getElementById("shortener-url");
-        var column_search = document.getElementById("column-search");
-        
-        column_search.removeChild(shortenerurl);
-        column_search.removeChild(label_url);
-
-        label_url = document.createElement('div');
-        label_url.setAttribute("id", "label-shortener-url");
-
-        label_url.innerHTML = "Click and press CTRL-C to copy";
-
-        shortenerurl = document.createElement('div');
-        shortenerurl.setAttribute("id", "shortener-url");
-        //el.innerHTML = "onclick='selectText(\"shortener-url\");'";
-
-        //var geoHash = el.innerHTML = "<a target = \"_blank\" href=\"http://geohash.org/"+ geoHash +"\"  ><h3>http://geohash.org/"+geoHash+"</h3></a>";
-        shortenerurl.innerHTML = "<div class = \"url\"><h3  onclick='selectText(\"shortener-url\");'> http://aqui.io/" + geoHash +"</h3></div>";
-        document.getElementById('column-search').appendChild(label_url);  
-        document.getElementById('column-search').appendChild(shortenerurl);      
-    } else {
-
-        var label_url = document.createElement('div');
-        label_url.setAttribute("id", "label-shortener-url");
-        label_url.innerHTML = "Click and press CTRL-C to copy";
-
-        var shortenerurl = document.createElement('div');
-        shortenerurl.setAttribute("id", "shortener-url");
-        //el.innerHTML = "onclick='selectText(\"shortener-url\");'";
-
-        shortenerurl.innerHTML = "<div class = \"url\"><h3 onclick='selectText(\"shortener-url\");'> http://aqui.io/" + geoHash +"</h3></div>";
-        //var geoHash = el.innerHTML = "<a target = \"_blank\" href=\"http://geohash.org/"+ geoHash +"\"><h3>http://geohash.org/"+geoHash+"</h3></a>";
-        document.getElementById('column-search').appendChild(label_url);  
-        document.getElementById('column-search').appendChild(shortenerurl);
-
-    }
-
-     selectText("shortener-url");
-    }
 
 $(document).ready(function(){
 
-    $("#btnSearchTop").click(function(){
+    function topAddressHandle() {
         $("#page-header").hide();
         $("#row-search").show();
 
         var address = $("#addressTop").val();
         var lat = address.split(" ")[0];
         var lon = address.split(" ")[1];
+        var result = new Array();
+        encode(lat, lon, ANYSRID, 3, 4326, result);
+
+        var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
+
+
+        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
+
+        $("#addressSide").val(lat + " " + lon)
+        $("#column-search").append(labelurl);
+        $("#column-search").append(shortenerurl);
+
         initialize(lat, lon);
-    
-    });
+        selectText("shortener-url");
+    }
 
-  
-});
-
-function geocodingAddress(buttonId) {
-       /* var result = new Array();
-
-        //console.log(buttonId);
-        if(buttonId == "btnSearchSide") var address = document.getElementById("addressSide").value;
-        else var address = document.getElementById("addressTop").value;
-        
+    function sideAddressHandle () {
+        var address = $("#addressSide").val();
         var lat = address.split(" ")[0];
         var lon = address.split(" ")[1];
-        
-        //console.log(lat);
-        //console.log(lon);
+        var result = new Array();
+        encode(lat, lon, ANYSRID, 3, 4326, result);
 
-        var geoHash = encode(lat, lon, ANYSRID, 3, 4326, result);
-        addDivUrl(result.join(""));
-        initialize(lat, lon);*/
+        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
+        $("#shortener-url").replaceWith(shortenerurl);
+        initialize(lat, lon);
+        selectText("shortener-url");
     }
+
+    $("#btnSearchTop").click(function(){
+        topAddressHandle(); 
+    });
+
+    $("#addressTop").keypress(function(e){
+        if(e.keyCode == 13)
+        {
+            topAddressHandle();
+        }
+    });
+
+
+    $("#btnSearchSide").click(function(){
+        sideAddressHandle();
+       
+    }); 
+
+    $("#addressSide").keypress(function(e){
+        if(e.keyCode == 13)
+        {
+             sideAddressHandle();
+        }
+    }); 
+});
+
 
 
