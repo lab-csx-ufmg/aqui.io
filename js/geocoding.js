@@ -1,11 +1,4 @@
-$(document).ready(function(){
 
-  $("#btnSearch").click(function(){
-	main();
-  });
-
-  
-  });
 
 
 var UTM = 2;
@@ -628,8 +621,24 @@ function addDivUrl (geoHash){
      selectText("shortener-url");
     }
 
+$(document).ready(function(){
+
+    $("#btnSearchTop").click(function(){
+        $("#page-header").hide();
+        $("#row-search").show();
+
+        var address = $("#addressTop").val();
+        var lat = address.split(" ")[0];
+        var lon = address.split(" ")[1];
+        initialize(lat, lon);
+    
+    });
+
+  
+});
+
 function geocodingAddress(buttonId) {
-        var result = new Array();
+       /* var result = new Array();
 
         //console.log(buttonId);
         if(buttonId == "btnSearchSide") var address = document.getElementById("addressSide").value;
@@ -643,7 +652,7 @@ function geocodingAddress(buttonId) {
 
         var geoHash = encode(lat, lon, ANYSRID, 3, 4326, result);
         addDivUrl(result.join(""));
-        initialize(lat, lon);
+        initialize(lat, lon);*/
     }
 
 
