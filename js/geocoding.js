@@ -352,10 +352,8 @@ function decode(code, latitude, longitude){
     var SRID;
     
     // decode MODE
-    //var charToInt = code[0];
     MODE = DECODE_TABLE[code[0].charCodeAt(0)];
-    //print(parseInt("code[0]" + code[0] + "\n");
-    //print(code[0].charCodeAt(0));    
+
 
     SYS = (MODE & 0x30) >> 4;
     PREC = (MODE & 0x0C) >> 2;
@@ -430,20 +428,8 @@ function decode(code, latitude, longitude){
     
     if (SRID == 1)
         SRID = 900913; // Google's SRID
-    
-    //console.log("blah");
-    //console.log("Decode: lat = " + lat + ", lon = " + lon + ", SRID = " + SRID + "\n");
-    
-   // print("DEC lat: " + lat.toFixed(6) + " lon: " + lon.toFixed(6) + "\n");   
-
-    if((latitude.toFixed(6) != lat.toFixed(6)) || (longitude.toFixed(6) != lon.toFixed(6))){
-       // print("diff ENC lat: " + latitude.toFixed(6) + " lon: " + longitude.toFixed(6) + " " + result.join(""));
-       // print("diff DEC lat: " + lat.toFixed(6) + " lon: " + lon.toFixed(6) + "\n");   
-       // print("\n"); 
-    } 
-
     return 0;
-	}
+}
 
 function main (){
    var lat, lon, N, E;
@@ -554,7 +540,10 @@ function selectText(divID) //divID contains actual id of ‘div’ element
         marker.setMap(map);
     }
 
+    function decodeResolver(var code){
 
+
+    }
 
 
 $(document).ready(function(){
