@@ -342,7 +342,7 @@ function encode(lat_or_N, lon_or_E, sys, precision, SRID, result){
 
 }
 
-function decode(code, latitude, longitude){
+function decode(code){
     var MODE, SYS, PREC, QUAD;
     var latbits, lonbits, fillerbits;
     var mult;
@@ -406,7 +406,7 @@ function decode(code, latitude, longitude){
 
     latint = latint.shiftRight(64 - latbits).clone();
     
-    var lat = latint.toNumber() * mult;
+    var lat = parseFloat(latint.toNumber() * mult);
     var lon = parseFloat(lonint.toNumber() * mult);
 
     // adjust quadrant
@@ -428,20 +428,23 @@ function decode(code, latitude, longitude){
     
     if (SRID == 1)
         SRID = 900913; // Google's SRID
-    return 0;
+    return lat + " " + lon;
 }
 
 function main (){
    var lat, lon, N, E;
    var SRID;
 
-   lat = -43.3924;
-   lon = -20.1322;
+   lat = 50;
+   lon =  0;
    
+   console.log("blah");
+
    var result = new Array();
-   //encode(lat, lon, 1, 3, 29193, result)
-   //console.log("Coordenadas " + lat + ", " + lon + ": aqui.io/" + result.join("") + "\n");
-   //decode(result,  29193);
+   encode(lat, lon, 1, 3, 29193, result);
+   console.log("Coordenadas " + lat + ", " + lon + ": aqui.io/" + result.join("") + "\n");
+   console.log("Decode " + decode(result));
+   
 
    E = 680000.0;
    N = 7800000.0;
@@ -461,43 +464,7 @@ function main (){
    return 0;
 }
 
-function encodeTeste(){
 
-    //encodeTesteLatLon(WGS84);
-    encodeTesteLatLon(ANYSRID);
-    encodeTesteLatLon(29193);
-}
-
-function encodeTesteLatLon(SRID){
-
-   // encode(lat, lon, precision, SRID, result);
-
-    var longitude = 0.0;
-    var latitude = 0.0;
-    var precision = 0;
-    var j = 0;
-   
-    for (precision = 1 ; precision <= 3 ; precision++){
-    while(latitude < 90){
-        while(longitude < 180){
-               
-            longitude+=0.90;
-            result = new Array();
-            encodeLATLON(latitude, longitude, precision, SRID, result);  
-            //print("ENC lat: " + latitude.toFixed(6) + " lon: " + longitude.toFixed(6) + " " + result.join(""));
-            decode(result, latitude, longitude);
-           // print("\n");
-            //print("result: " + result.join("") + " latitude: " + latitude + " longitude: " + longitude);
-            //saida.value += result.join("") + "\n";
-            //printf("lat: %lf lon: %lf %s\n", latitude, longitude, result);
-        }
-        latitude +=0.009;
-        longitude = 0.0;
-    }
-    latitude = 0.0;
-   }    
-    
-}
 
 function selectText(divID) //divID contains actual id of ‘div’ element
 {
@@ -553,10 +520,11 @@ $(document).ready(function(){
         $("#row-search").show();
 
         var address = $("#addressTop").val();
-        var lat = address.split(" ")[0];
-        var lon = address.split(" ")[1];
+        var lat = parseFloat(address.split(" ")[0]);
+        var lon = parseFloat(address.split(" ")[1]);
         var result = new Array();
         encode(lat, lon, ANYSRID, 3, 4326, result);
+        
 
         var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
 
@@ -573,10 +541,11 @@ $(document).ready(function(){
 
     function sideAddressHandle () {
         var address = $("#addressSide").val();
-        var lat = address.split(" ")[0];
-        var lon = address.split(" ")[1];
+        var lat = parseFloat(address.split(" ")[0]);
+        var lon = parseFloat(address.split(" ")[1]);
         var result = new Array();
         encode(lat, lon, ANYSRID, 3, 4326, result);
+    
 
         var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
         if($("#shortener-url").length > 0) {
@@ -594,16 +563,24 @@ $(document).ready(function(){
         selectText("shortener-url");
     }
 
+  /*  function getLocation(){
+        var
+    }*/
+
+    function showPosition(position) {
+       return "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+    }
     function decodeHandle(code){
         var address = decode(code);
-        var lat = address.split(" ")[0];
-        var lon = address.split(" ")[1];
+        var lat = parseFloat(address.split(" ")[0]);
+        var lon = parseFloat(address.split(" ")[1]);
 
         var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + code +"</h3></div></div>";
         var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
         $("#addressSide").val(lat + " " + lon)
         $("#column-search").append(labelurl);
         $("#column-search").append(shortenerurl);
+        initialize(lat, lon);
     }
 
     $("#btnSearchTop").click(function(){
@@ -631,12 +608,11 @@ $(document).ready(function(){
     }); 
 
     if($("#page-header").length <= 0){
-        var sPageURL = window.location.search.substring(1);
-        var code = sPageURL.split('code=')[0];
-        console.log(sPageURL);
-        //sideAddressHandle();        
-
+        var sPageURL = document.URL;
+        var code = sPageURL.split('AQUI.io/')[1];
+        decodeHandle(code);
     }
+     if (navigator.geolocation) console.log(navigator.geolocation.getCurrentPosition(showPosition));
 });
 
 

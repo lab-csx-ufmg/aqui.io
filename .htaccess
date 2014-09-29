@@ -4,4 +4,4 @@ RewriteEngine On
 RewriteCond %{SCRIPT_FILENAME} !-d
 RewriteCond %{SCRIPT_FILENAME} !-f
  
-RewriteRule (.*)$ ./decode.html?code=$1
+RewriteRule ([A-Za-z0-9]+)$ ./decode.html?code=$1
