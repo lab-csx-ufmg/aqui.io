@@ -540,7 +540,7 @@ function selectText(divID) //divID contains actual id of ‘div’ element
         marker.setMap(map);
     }
 
-    function decodeResolver(var code){
+    function decodeResolver(code){
 
 
     }
@@ -579,9 +579,31 @@ $(document).ready(function(){
         encode(lat, lon, ANYSRID, 3, 4326, result);
 
         var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
-        $("#shortener-url").replaceWith(shortenerurl);
+        if($("#shortener-url").length > 0) {
+            $("#shortener-url").replaceWith(shortenerurl);
+        }
+        else {
+            var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
+            var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
+            $("#addressSide").val(lat + " " + lon)
+            $("#column-search").append(labelurl);
+            $("#column-search").append(shortenerurl);
+        }   
+
         initialize(lat, lon);
         selectText("shortener-url");
+    }
+
+    function decodeHandle(code){
+        var address = decode(code);
+        var lat = address.split(" ")[0];
+        var lon = address.split(" ")[1];
+
+        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + code +"</h3></div></div>";
+        var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
+        $("#addressSide").val(lat + " " + lon)
+        $("#column-search").append(labelurl);
+        $("#column-search").append(shortenerurl);
     }
 
     $("#btnSearchTop").click(function(){
@@ -607,6 +629,14 @@ $(document).ready(function(){
              sideAddressHandle();
         }
     }); 
+
+    if($("#page-header").length <= 0){
+        var sPageURL = window.location.search.substring(1);
+        var code = sPageURL.split('code=')[0];
+        console.log(sPageURL);
+        //sideAddressHandle();        
+
+    }
 });
 
 
