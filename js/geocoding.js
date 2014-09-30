@@ -507,16 +507,20 @@ function selectText(divID) //divID contains actual id of ‘div’ element
         marker.setMap(map);
     }
 
-    function decodeResolver(code){
-
-
-    }
+   
 
 
 $(document).ready(function(){
+
+
     if(navigator.geolocation) {
         divYourLocation();
     } 
+   
+    function divYourLocation(){
+        var buttonLocation = "<a id = 'id-my-location' href='javascript:void(0);'><spam class='glyphicon glyphicon-map-marker'></spam>your location</a>";
+        $("#address-header").append(buttonLocation);
+    }
 
     function topAddressHandle() {
         $("#page-header").hide();
@@ -542,7 +546,7 @@ $(document).ready(function(){
         selectText("shortener-url");
     }
 
-    function topAddressHandle(latitude, longitude) {
+    function yourLocationHandle(latitude, longitude) {
         $("#page-header").hide();
         $("#row-search").show();
 
@@ -603,21 +607,6 @@ $(document).ready(function(){
         initialize(lat, lon);
     }
 
-    function divYourLocation(){
-        var buttonLocation = "<a id = 'id-my-location' href='javascript:yourLocationHandle();'><i class='glyphicon glyphicon-map-marker'></i>your location</a>"
-        $("#address-header").append(buttonLocation);
-    }
-
-    function getPosition(position){
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        topAddressHandle(latitude, longitude);
-    }
-    function yourLocationHandle(){
-        console.log("blah");
-        navigator.geolocation.getCurrentPosition(getPosition);
-    }
-
     $("#btnSearchTop").click(function(){
         topAddressHandle(); 
     });
@@ -630,8 +619,22 @@ $(document).ready(function(){
         }
     });
 
+     function getPosition(position){
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        yourLocationHandle(latitude, longitude);
+        //console.log(latitude + " " + longitude);
+
+    }
+    function yourLocation(){
+        //console.log("blah");
+        navigator.geolocation.getCurrentPosition(getPosition);
+    }
+  
+
     $("#id-my-location").click(function(){
-        yourLocationHandle();
+        yourLocation();
+        
     });
 
     $("#btnSearchSide").click(function(){
