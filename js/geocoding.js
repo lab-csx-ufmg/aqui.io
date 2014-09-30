@@ -514,6 +514,9 @@ function selectText(divID) //divID contains actual id of ‘div’ element
 
 
 $(document).ready(function(){
+    if(navigator.geolocation) {
+        divYourLocation();
+    } 
 
     function topAddressHandle() {
         $("#page-header").hide();
@@ -522,6 +525,30 @@ $(document).ready(function(){
         var address = $("#addressTop").val();
         var lat = parseFloat(address.split(" ")[0]);
         var lon = parseFloat(address.split(" ")[1]);
+        var result = new Array();
+        encode(lat, lon, ANYSRID, 3, 4326, result);
+        
+
+        var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
+
+
+        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
+
+        $("#addressSide").val(lat + " " + lon)
+        $("#column-search").append(labelurl);
+        $("#column-search").append(shortenerurl);
+
+        initialize(lat, lon);
+        selectText("shortener-url");
+    }
+
+    function topAddressHandle(latitude, longitude) {
+        $("#page-header").hide();
+        $("#row-search").show();
+
+        
+        var lat = latitude;
+        var lon = longitude;
         var result = new Array();
         encode(lat, lon, ANYSRID, 3, 4326, result);
         
@@ -563,13 +590,6 @@ $(document).ready(function(){
         selectText("shortener-url");
     }
 
-  /*  function getLocation(){
-        var
-    }*/
-
-    function showPosition(position) {
-       return "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
-    }
     function decodeHandle(code){
         var address = decode(code);
         var lat = parseFloat(address.split(" ")[0]);
@@ -583,9 +603,25 @@ $(document).ready(function(){
         initialize(lat, lon);
     }
 
+    function divYourLocation(){
+        var buttonLocation = "<a id = 'id-my-location' href='javascript:yourLocationHandle();'><i class='glyphicon glyphicon-map-marker'></i>your location</a>"
+        $("#address-header").append(buttonLocation);
+    }
+
+    function getPosition(position){
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        topAddressHandle(latitude, longitude);
+    }
+    function yourLocationHandle(){
+        console.log("blah");
+        navigator.geolocation.getCurrentPosition(getPosition);
+    }
+
     $("#btnSearchTop").click(function(){
         topAddressHandle(); 
     });
+
 
     $("#addressTop").keypress(function(e){
         if(e.keyCode == 13)
@@ -594,6 +630,9 @@ $(document).ready(function(){
         }
     });
 
+    $("#id-my-location").click(function(){
+        yourLocationHandle();
+    });
 
     $("#btnSearchSide").click(function(){
         sideAddressHandle();
@@ -612,7 +651,7 @@ $(document).ready(function(){
         var code = sPageURL.split('AQUI.io/')[1];
         decodeHandle(code);
     }
-     if (navigator.geolocation) console.log(navigator.geolocation.getCurrentPosition(showPosition));
+       
 });
 
 
