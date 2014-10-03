@@ -487,8 +487,6 @@ function selectText(divID) //divID contains actual id of ‘div’ element
     }
 }
 
-      
-
     function initialize(lat, lon)
     {
         var myCenter = new google.maps.LatLng(parseFloat(lat), parseFloat(lon));
@@ -507,8 +505,70 @@ function selectText(divID) //divID contains actual id of ‘div’ element
         marker.setMap(map);
     }
 
-   
+    function searchPlace(place) {
 
+        var service;
+        var items = ""; 
+        geocoder = new google.maps.Geocoder();
+
+        var map = new google.maps.Map(document.getElementById('map-canvas'), {           
+            zoom: 2
+        });
+
+        var request = {
+            address: place,
+        };
+
+        geocoder.geocode(request, callback);
+        
+        function callback(results, status) {  
+            if (status == google.maps.GeocoderStatus.OK) {
+                for (var i = 0; i < results.length; i++) {
+                    var place = results[i];
+                    createMarker(results[i], map, i+1);
+                    //items = "<div class='alert alert-info' role ='alert'><a href='#' onclick=\"yourLocationHandle('"+results[i].geometry.location.lat +"','"+ results[i].geometry.location.lng +"')\" class='alert-link'>"+ results[i].formatted_address +"</a></div>";
+                    items = "<div class='alert alert-info' role ='alert'><a href='#' onclick=\"yourLocationHandle"+results[i].geometry.location +"\" class='alert-link'>"+ results[i].formatted_address +"</a></div>";
+                    $("#column-search").append(items);
+                }
+                map.setCenter(results[0].geometry.location);
+            }
+            console.log(items);    
+        }
+    }
+    function createMarker(place, map, number) {
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location,
+        icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + number + "|0099FF|000000",
+        animation: google.maps.Animation.DROP
+    });
+
+}
+
+    function yourLocationHandle(latitude, longitude) {
+        $("#page-header").hide();
+        $("#row-search").show();
+
+        
+        var lat = latitude;
+        var lon = longitude;
+        var result = new Array();
+        encode(lat, lon, ANYSRID, 3, 4326, result);
+        
+
+        var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
+
+
+        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
+
+        $("#addressSide").val(lat + " " + lon)
+        $("#column-search").append(labelurl);
+        $("#column-search").append(shortenerurl);
+
+        initialize(lat, lon);
+        selectText("shortener-url");
+    }
 
 $(document).ready(function(){
 
@@ -534,50 +594,28 @@ $(document).ready(function(){
         var lon = parseFloat(address.split(" ")[1]);
 
         if (!isNaN(lat) && !isNaN(lon)){
-            
             encode(lat, lon, ANYSRID, 3, 4326, result);
+            initialize(lat, lon);
+            var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
+            var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
+
+            $("#addressSide").val(lat + " " + lon)
+            $("#column-search").append(labelurl);
+            $("#column-search").append(shortenerurl);
+
+            selectText("shortener-url");
         }else{
-            //pegar Lat lon do google
-        }
-        
-        
-
-        var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
-
-
-        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
-
-        $("#addressSide").val(lat + " " + lon)
-        $("#column-search").append(labelurl);
-        $("#column-search").append(shortenerurl);
-
-        initialize(lat, lon);
-        selectText("shortener-url");
+            var itens = searchPlace(address);
+            var labelurl = "<div id = 'label-shortener-url'>Choose your place below:</div>";            
+            
+            $("#addressSide").val(address);
+            $("#column-search").append(labelurl);
+            $("#column-search").append(itens);
+            
+        }        
     }
 
-    function yourLocationHandle(latitude, longitude) {
-        $("#page-header").hide();
-        $("#row-search").show();
-
-        
-        var lat = latitude;
-        var lon = longitude;
-        var result = new Array();
-        encode(lat, lon, ANYSRID, 3, 4326, result);
-        
-
-        var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
-
-
-        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
-
-        $("#addressSide").val(lat + " " + lon)
-        $("#column-search").append(labelurl);
-        $("#column-search").append(shortenerurl);
-
-        initialize(lat, lon);
-        selectText("shortener-url");
-    }
+    
 
     function sideAddressHandle () {
         var address = $("#addressSide").val();
