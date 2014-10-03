@@ -518,7 +518,8 @@ $(document).ready(function(){
     } 
    
     function divYourLocation(){
-        var buttonLocation = "<a id = 'id-my-location' href='javascript:void(0);'><spam class='glyphicon glyphicon-map-marker'></spam>your location</a>";
+        //var buttonLocation = "<a id = 'id-my-location' data-toggle='tooltip' data-placement='right' title='Get your location!' href='javascript:void(0);'><spam class='glyphicon glyphicon-map-marker'></spam></a>";
+        var buttonLocation = "";
         $("#address-header").append(buttonLocation);
     }
 
@@ -527,10 +528,18 @@ $(document).ready(function(){
         $("#row-search").show();
 
         var address = $("#addressTop").val();
+        var result = new Array();
+
         var lat = parseFloat(address.split(" ")[0]);
         var lon = parseFloat(address.split(" ")[1]);
-        var result = new Array();
-        encode(lat, lon, ANYSRID, 3, 4326, result);
+
+        if (!isNaN(lat) && !isNaN(lon)){
+            
+            encode(lat, lon, ANYSRID, 3, 4326, result);
+        }else{
+            //pegar Lat lon do google
+        }
+        
         
 
         var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";

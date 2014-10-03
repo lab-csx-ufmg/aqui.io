@@ -376,7 +376,7 @@ body {
 	/*float: left;*/
 }
 
-.btnSearch {
+#btnSearchTop {
 	margin-top: 15px;
 }
 
@@ -473,6 +473,8 @@ body {
 	border-bottom: 0 !important;
 	margin-top: 90px;
 }
-#id-my-location{
-	margin-top: 0px;
+
+#id-my-location {
+	margin-top: 50px;
+
 }
