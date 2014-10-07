@@ -471,9 +471,9 @@ function main (){
         // var d = new Date();
         // d.setTime(d.getTime() + (exdays*24*60*60*1000));
         // var expires = "expires="+d.toUTCString();
-        document.cookie = "code=" + code + ";" ;
+        document.cookie = code +"=" + "code" + "; path=/AQUI.io" ;
 
-        console.log("entrou");
+        // console.log("entrou");
         console.log(document.cookie);
 
         if($("#places-sought-shortener-url").length > 0 || $("#label-places-sought").length > 0){
@@ -489,18 +489,21 @@ function main (){
 
     function returnListPlaces() {
         var items;
-        var places = document.cookie.split("code=");
+        var places = document.cookie.split(";");
         var labelurl = "<div id = 'label-places-sought'>Places... :</div>";
         var shortenerurl = ""; 
         var url;
+        var type;
         if (places.length > 0){
 
             //items = "<div id = 'listPlaces'>";
             for (var i = 0 ; i < places.length ; i++){
-                code = places[i].split(";")[0];
+                code = places[i].split("=")[0].replace(" ", "");
+                type = places[i].split("=")[1];
                 //console.log(code);
-                shortenerurl += "<div id = 'places-sought-shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + code +"</h3></div></div>";;
-                
+                if (type == "code") {
+                    items += "<div id = 'places-sought-shortener-url'><div id= 'shortener-text' class = 'url'><a href='http://localhost/AQUI.io/" + code +"'\"><h3> http://aqui.io/" + code +"</h3></a></div></div>";;    
+                }
             } 
             //items += "</div>";
         }
