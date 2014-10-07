@@ -471,30 +471,34 @@ function main (){
         // var d = new Date();
         // d.setTime(d.getTime() + (exdays*24*60*60*1000));
         // var expires = "expires="+d.toUTCString();
-        document.cookie = code + ";" ;
+        document.cookie = "code=" + code + ";" ;
 
+        console.log("entrou");
+        console.log(document.cookie);
 
-/*        if($("#places-sought-shortener-url").length > 0){
+        if($("#places-sought-shortener-url").length > 0 || $("#label-places-sought").length > 0){
             $("#places-sought-shortener-url").remove();
+            $("#label-places-sought").remove();
             returnListPlaces();
-        }else {
+        } else{
             returnListPlaces();
-        }*/
+        }
     }
 
   
 
     function returnListPlaces() {
         var items;
-        var places = document.cookie.split(";");
+        var places = document.cookie.split("code=");
         var labelurl = "<div id = 'label-places-sought'>Places... :</div>";
         var shortenerurl = ""; 
         var url;
         if (places.length > 0){
+
             //items = "<div id = 'listPlaces'>";
             for (var i = 0 ; i < places.length ; i++){
-                //place[i].replace(";", "");
-                code = places[i];
+                code = places[i].split(";")[0];
+                //console.log(code);
                 shortenerurl += "<div id = 'places-sought-shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + code +"</h3></div></div>";;
                 
             } 
@@ -568,6 +572,11 @@ function main (){
             $('#shortener-url').remove();    
         }
 
+        if($("#places-sought-shortener-url").length > 0 || $("#label-places-sought").length > 0){
+            $("#places-sought-shortener-url").remove();
+            $("#label-places-sought").remove();
+        }
+            
         geocoder.geocode(request, callback);
         
         function callback(results, status) {  
@@ -676,7 +685,6 @@ function main (){
             labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
             shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
 
-            setCookie(result.join(""));
             $("#addressSide").val(lat + " " + lon)
             $("#column-search").append(labelurl);
             $("#column-search").append(shortenerurl);
@@ -738,11 +746,8 @@ function main (){
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
         yourLocationHandle(latitude, longitude);
-        //console.log(latitude + " " + longitude);
-
     }
     function yourLocation(){
-        //console.log("blah");
         navigator.geolocation.getCurrentPosition(getPosition);
     }
 
