@@ -113,14 +113,21 @@
         
         function callback(results, status) {  
             if (status == google.maps.GeocoderStatus.OK) {
-                items = "<div id = 'listPlaces' class= 'row'>";
+                //items = "<div id = 'listPlaces' class = 'row'>";
+                items = "<ul class='list-group'>"
                 for (var i = 0; i < results.length; i++) {
                     var place = results[i];
                     createMarker(results[i], map, i+1);
-                    items += "<div class = 'col-lg-2'>blah</div><div id = 'item-place' class = 'col-lg-10'><a href='#' onclick=\"listPlacesHandle"+results[i].geometry.location +"\">"+ results[i].formatted_address +"</a></div>";
+                    items += "<li>"
+                    items += "<div class='panel panel-primary'> <div class='panel-body'>"
+                    items += "<div class='panel-info'>blah</div>"
+                    items += "<div class = 'panel-more1'><a href='#' onclick=\"listPlacesHandle"+results[i].geometry.location +"\">"+ results[i].formatted_address +"</a></div>";
+                    items += "</div></div></li>"
+                    //items += "<div id = 'balloon-place' class = 'col-sm-2'>oi blasdfa bafas </div><div id = 'item-place' class = 'col-sm-10'><a href='#' onclick=\"listPlacesHandle"+results[i].geometry.location +"\">"+ results[i].formatted_address +"</a></div>";
                     
                 }
-                items += "</div>";
+                //items += "</div>";
+                items += "</ul>";
                 map.setCenter(results[0].geometry.location);
             } 
             labelurl = "<div id = 'label-shortener-url'>Choose your place below:</div>";            
