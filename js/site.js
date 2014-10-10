@@ -10,9 +10,9 @@
         if($("#places-sought-shortener-url").length > 0 || $("#label-places-sought").length > 0){
             $("#places-sought-shortener-url").remove();
             $("#label-places-sought").remove();
-            returnListPlaces();
+            //returnListPlaces();
         } else{
-            returnListPlaces();
+            //returnListPlaces();
         }
     }
 
@@ -113,14 +113,14 @@
         
         function callback(results, status) {  
             if (status == google.maps.GeocoderStatus.OK) {
-                items = "<div id = 'listPlaces'>";
+                items = "<div id = 'listPlaces' class= 'row'>";
                 for (var i = 0; i < results.length; i++) {
                     var place = results[i];
                     createMarker(results[i], map, i+1);
-                    items += "<div class='alert alert-info' role ='alert'><a href='#' onclick=\"listPlacesHandle"+results[i].geometry.location +"\" class='alert-link'>"+ results[i].formatted_address +"</a></div>";
+                    items += "<div class = 'col-lg-2'>blah</div><div id = 'item-place' class = 'col-lg-10'><a href='#' onclick=\"listPlacesHandle"+results[i].geometry.location +"\">"+ results[i].formatted_address +"</a></div>";
                     
                 }
-                items += "<div>";
+                items += "</div>";
                 map.setCenter(results[0].geometry.location);
             } 
             labelurl = "<div id = 'label-shortener-url'>Choose your place below:</div>";            
