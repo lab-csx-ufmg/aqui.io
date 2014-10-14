@@ -83,6 +83,7 @@
 
     function searchPlace(place) {
 
+        var totalItems = 6;
         var service;
         var items = ""; 
         var pagination = "";
@@ -108,6 +109,10 @@
             $("#places-sought-shortener-url").remove();
             $("#label-places-sought").remove();
         }
+
+        if($('#pagination-demo').length > 0){
+            $('#pagination-demo').remove();
+        }
        
         $("#addressSide").val(place);
         geocoder.geocode(request, callback);
@@ -115,12 +120,16 @@
         function callback(results, status) {  
             if (status == google.maps.GeocoderStatus.OK) {
                 items +="<div id = 'listPlaces'>";
+
                 for (var i = 0; i < results.length; i++) {
-                    var place = results[i];
-                    createMarker(results[i], map, i+1);
-                   
-                    items += createListPlaces(i, results[i]);                    
-                }
+                        var place = results[i];
+                        if(i < totalItems){ 
+                            items += createListPlaces(i, results[i], true);                    
+                            
+                        }    
+                        else items += createListPlaces(i, results[i], false);                    
+                    createMarker(results[i], map, i+1);    
+                }     
                 map.setCenter(results[0].geometry.location);
                 items+="</div>";
             } 
@@ -130,16 +139,50 @@
             $("#column-search").append(labelurl);
             $("#column-search").append(items);
 
-            if(results.length >= 5){
-                pagination = "<ul class='pager'><li><a href='#'>Previous</a></li><li><a href='#>Next</a></li></ul>";
-                $("#column-search").append(pagination);
+            if(results.length > totalItems){
+                    paginationHandle(results, totalItems);
             }
         }
     }
 
-    function createListPlaces(identifier, result){
+    function paginationHandle(results, totalItems){
+        var pagination = "";
+        pagination = "<ul id='pagination-demo' class='pagination pagination-sm'>";
+        pags = Math.ceil(results.length / totalItems);
+        for(var i = 0 ; i < pags ; i++) pagination += "<li><a href='#'>"+(i+1)+"</a></li>";
+        pagination += "</lu>";
+
+        if($('#pagination-demo').length > 0){
+            $('#pagination-demo').remove();
+        }
+
+        $("#column-search").append(pagination);
+
+        $('#pagination-demo').twbsPagination({
+            totalPages: pags,
+            visiblePages: 2,
+            onPageClick: function (event, page) {
+
+                for(var i = 0 ; i < pags*totalItems ; i++){
+                    var item = '#item-place' + i;
+                    if($(item).length > 0){
+                        if((i >= totalItems * (page - 1)) && i < (totalItems * page)){
+                            $(item).show();
+                        } else {
+                            $(item).hide();
+                        }
+                    }
+                }
+                //$('#listPlaces panel panel-default').hide();
+                //$('#listPlaces').text('Page ' + page);
+            }
+        });
+    }
+
+    function createListPlaces(identifier, result, visibility){
         var item = "";
-        item += "<div class='panel panel-default'>";
+        if(!visibility) item += "<div id= 'item-place"+ identifier + "' class='panel panel-default' hidden = 'true'>";
+        else item += "<div id= 'item-place"+ identifier + "' class='panel panel-default'>";
         item += "<div class='panel-body alert alert-info'>";
         item += "<div class='row'>";
         item += "<div id = 'balloon-place' class='col-xs-1 col-sm-1 '><img src='http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + (identifier+1) + "|0099FF|000000'/></div>";
@@ -185,6 +228,10 @@
 
         if($("#shortener-url").length > 0) $("#shortener-url").replaceWith(shortenerurl);
         else $("#column-search").append(shortenerurl);
+
+        if($('#pagination-demo').length > 0){
+            $('#pagination-demo').remove();
+        }
 
         $("#addressSide").val(lat + " " + lon);       
         initialize(lat, lon);
@@ -286,5 +333,6 @@
             var sPageURL = document.URL;
             var code = sPageURL.split('AQUI.io/')[1];
             decodeHandle(code);
-        }       
+        }   
+
     });
