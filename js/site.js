@@ -85,6 +85,7 @@
 
         var service;
         var items = ""; 
+        var pagination = "";
         geocoder = new google.maps.Geocoder();
 
         var map = new google.maps.Map(document.getElementById('map-canvas'), {           
@@ -113,30 +114,41 @@
         
         function callback(results, status) {  
             if (status == google.maps.GeocoderStatus.OK) {
-                //items = "<div id = 'listPlaces' class = 'row'>";
-                items = "<ul class='list-group'>"
+                items +="<div id = 'listPlaces'>";
                 for (var i = 0; i < results.length; i++) {
                     var place = results[i];
                     createMarker(results[i], map, i+1);
-                    items += "<li>"
-                    items += "<div class='panel panel-primary'> <div class='panel-body'>"
-                    items += "<div class='panel-info'>blah</div>"
-                    items += "<div class = 'panel-more1'><a href='#' onclick=\"listPlacesHandle"+results[i].geometry.location +"\">"+ results[i].formatted_address +"</a></div>";
-                    items += "</div></div></li>"
-                    //items += "<div id = 'balloon-place' class = 'col-sm-2'>oi blasdfa bafas </div><div id = 'item-place' class = 'col-sm-10'><a href='#' onclick=\"listPlacesHandle"+results[i].geometry.location +"\">"+ results[i].formatted_address +"</a></div>";
-                    
+                   
+                    items += createListPlaces(i, results[i]);                    
                 }
-                //items += "</div>";
-                items += "</ul>";
                 map.setCenter(results[0].geometry.location);
+                items+="</div>";
             } 
             labelurl = "<div id = 'label-shortener-url'>Choose your place below:</div>";            
             
             
             $("#column-search").append(labelurl);
             $("#column-search").append(items);
+
+            if(results.length >= 5){
+                pagination = "<ul class='pager'><li><a href='#'>Previous</a></li><li><a href='#>Next</a></li></ul>";
+                $("#column-search").append(pagination);
+            }
         }
     }
+
+    function createListPlaces(identifier, result){
+        var item = "";
+        item += "<div class='panel panel-default'>";
+        item += "<div class='panel-body alert alert-info'>";
+        item += "<div class='row'>";
+        item += "<div id = 'balloon-place' class='col-xs-1 col-sm-1 '><img src='http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + (identifier+1) + "|0099FF|000000'/></div>";
+        item += "<div id = 'item-place' class='col-xs-11 col-sm-11'><a href='#' onclick=\"listPlacesHandle"+result.geometry.location +"\">"+ result.formatted_address +"</a></div>";
+        item += "</div></div></div>";
+
+        return item;
+    }
+
     function createMarker(place, map, number) {
         var placeLoc = place.geometry.location;
         var marker = new google.maps.Marker({
@@ -184,7 +196,7 @@
     function divYourLocation(){
         //var buttonLocation = "<a id = 'id-my-location' data-toggle='tooltip' data-placement='right' title='Get your location!' href='javascript:void(0);'><spam class='glyphicon glyphicon-map-marker'></spam></a>";
         var buttonLocation = "";
-        $("#address-header").append(buttonLocation);
+        //$("#address-header").append(buttonLocation);
     }
 
     function topAddressHandle() {
@@ -249,13 +261,17 @@
             divYourLocation();
         } 
        
-        $("#id-my-location").click(function(){
-            yourLocation();
+        // $("#id-my-location").click(function(){
+        //     yourLocation();
             
-        });
+        // });
 
         $("#btnSearchSide").click(function(){
             sideAddressHandle();
+           
+        }); 
+        $("#yourLocation").click(function(){
+            yourLocation();
            
         }); 
 

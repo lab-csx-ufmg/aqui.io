@@ -380,6 +380,18 @@ body {
 	margin-top: 15px;
 }
 
+#yourLocation{
+	margin-top: 15px;	
+	text-align: right;
+
+/*	background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;*/
+}
+
 #address-header{
 	margin-top: 0px;
 	text-align: center;
@@ -485,11 +497,12 @@ body {
 #listPlaces{
 	/*width: 100%;*/
 	margin-top: 5px;
-	background-color: #f5f5f5;
-	border: 1px solid #ebebeb;
+	/*background-color: #f5f5f5;
+	border: 1px solid #ebebeb;*/
 	text-align: center;
 	margin-right: 0px;
 	margin-left: 0px;
+	margin-bottom: 5px;
 	/*padding-right: 0px 0px 0px 0px;*/
 }
 
@@ -504,17 +517,21 @@ body {
 }
 
 #item-place{
-	border: 1px solid #ebebeb;
+	text-align: left;
+	padding-top: 4px;
+	padding-bottom: 2px;
 }
 
-#balloon-place{
-	/*border: 1px solid #ebebeb;	*/
+#balloon-place{;
+	text-align: center;
 }
 
-.list-group li {
-    list-style: none;
+.panel-body{
+	padding: 5px 5px 5px 5px;
 }
-.panel-info, .panel-rating, .panel-more1 {
-    float: left;
-    margin: 0 10px;
+
+.panel{
+	margin-bottom: 1px;
 }
+
+
