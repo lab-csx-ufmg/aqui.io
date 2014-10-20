@@ -81,21 +81,7 @@
         marker.setMap(map);
     }
 
-    function searchPlace(place) {
-
-        var totalItems = 6;
-        var service;
-        var items = ""; 
-        var pagination = "";
-        geocoder = new google.maps.Geocoder();
-
-        var map = new google.maps.Map(document.getElementById('map-canvas'), {           
-            zoom: 2
-        });
-
-        var request = {
-            address: place,
-        };
+    function cleanForSearchPlace(){
 
         if ($('#listPlaces').length > 0){ 
             $("#listPlaces").remove();    
@@ -113,12 +99,33 @@
         if($('#pagination-demo').length > 0){
             $('#pagination-demo').remove();
         }
+
+    }
+
+    function searchPlace(place, btn) {
+
+        var totalItems = 6;
+        var service;
+        var items = ""; 
+        var pagination = "";
+        geocoder = new google.maps.Geocoder();
+
+        var request = {
+            address: place,
+        };
+
        
         $("#addressSide").val(place);
         geocoder.geocode(request, callback);
         
         function callback(results, status) {  
             if (status == google.maps.GeocoderStatus.OK) {
+                cleanForSearchPlace();
+                $("#page-header").hide();
+                $("#row-search").show();
+                var map = new google.maps.Map(document.getElementById('map-canvas'), {           
+                     zoom: 2
+                });
                 items +="<div id = 'listPlaces'>";
 
                 for (var i = 0; i < results.length; i++) {
@@ -137,16 +144,39 @@
             
                 $("#column-search").append(labelurl);
                 $("#column-search").append(items);
-            }else{ 
-               labelurl = "<div id = 'label-shortener-url'>Achei nada não!</div>";
-               $("#column-search").append(labelurl);
-              // map.setCenter("-19.7434088, -43.9568567");
-            } 
+
+            }
             
             if(results.length > totalItems){
-                    paginationHandle(results, totalItems);
+                paginationHandle(results, totalItems);
+            }
+            if(results.length > 0){
+                if(btn == "address-header"){                    
+                    $("#address-header").removeClass("has-error has-feedback");
+                    $("label[for='Error']").remove();
+                    $("span[for='Error']").remove();
+                }else{
+                    console.log("removeError");
+                    $("#address-bar").removeClass("has-error has-feedback");
+                    $("label[for='Error']").remove();
+                    $("span[for='Error']").remove();
+                }
+                console.log(btn);
+            }else{
+                if(btn == "address-header"){
+                    $("#address-header").addClass("has-error has-feedback");
+                    $("#addressTop").before("<label For ='Error' class='control-label sr-only' for='inputSuccess5'>Hidden label</label>");
+                    $("#addressTop").after("<span For ='Error' class='glyphicon glyphicon-remove form-control-feedback'></span>");    
+                }else{
+                     $("#address-bar").addClass("has-error has-feedback");
+                    $("#addressSide").before("<label for= 'Error' class='control-label sr-only' for='inputSuccess5'>Hidden label</label>");
+                    $("#addressSide").after("<span for= 'Error' class='glyphicon glyphicon-remove form-control-feedback'></span>");
+                    
+                }
+                
             }
         }
+        
     }
 
     function paginationHandle(results, totalItems){
@@ -243,45 +273,64 @@
     }
 
     function divYourLocation(){
-        //var buttonLocation = "<a id = 'id-my-location' data-toggle='tooltip' data-placement='right' title='Get your location!' href='javascript:void(0);'><spam class='glyphicon glyphicon-map-marker'></spam></a>";
         var buttonLocation = "";
-        //$("#address-header").append(buttonLocation);
     }
 
     function topAddressHandle() {
         
-        var address = $("#addressTop").val();    
-        if(addressHandle(address) == true){
-            $("#page-header").hide();
-            $("#row-search").show();
+        var address = $("#addressTop").val();  
+        address = address.trim();
+        while(address.indexOf("  ") != -1) address = address.replace("  ", " ");
+        
+        var lat = parseFloat(address.split(" ")[0]);
+        var lon = parseFloat(address.split(" ")[1]);  
+    
+        if (!isNaN(lat) && !isNaN(lon)){
+            if(latitudeCheck(lat) && longitudeCheck(lon)){
+                locationHandle(lat, lon);
+                $("#page-header").hide();
+                $("#row-search").show();
 
-            $("#address-header").removeClass("has-error has-feedback");
-            $("label[for='Error']").remove();
-            $("span[for='Error']").remove();
+                $("#address-header").removeClass("has-error has-feedback");
+                $("label[for='Error']").remove();
+                $("span[for='Error']").remove();
 
-        }else{
-            $("#address-header").addClass("has-error has-feedback");
-            $("#addressTop").before("<label For ='Error' class='control-label sr-only' for='inputSuccess5'>Hidden label</label>");
-            $("#addressTop").after("<span For ='Error' class='glyphicon glyphicon-remove form-control-feedback'></span>");
-        }
+
+            }else{
+                $("#address-header").addClass("has-error has-feedback");
+                $("#addressTop").before("<label For ='Error' class='control-label sr-only' for='inputSuccess5'>Hidden label</label>");
+                $("#addressTop").after("<span For ='Error' class='glyphicon glyphicon-remove form-control-feedback'></span>");
+            }
+        } else{
+            searchPlace(address, "address-header");
+        }   
     }
 
     function sideAddressHandle () {
         var address = $("#addressSide").val();
 
-        if(addressHandle(address) == true){
-            $("#page-header").hide();
-            $("#row-search").show();
+        address = address.trim();
+        while(address.indexOf("  ") != -1) address = address.replace("  ", " ");
+        
+        var lat = parseFloat(address.split(" ")[0]);
+        var lon = parseFloat(address.split(" ")[1]);
 
-            $("#address-bar").removeClass("has-error has-feedback");
-            $("label[for='Error']").remove();
-            $("span[for='Error']").remove();
+         if (!isNaN(lat) && !isNaN(lon)){
+            if(latitudeCheck(lat) && longitudeCheck(lon)){
+                locationHandle(lat, lon);
 
-        }else{
-            $("#address-bar").addClass("has-error has-feedback");
-            $("#addressSide").before("<label for= 'Error' class='control-label sr-only' for='inputSuccess5'>Hidden label</label>");
-            $("#addressSide").after("<span for= 'Error' class='glyphicon glyphicon-remove form-control-feedback'></span>");
-        }
+                $("#address-bar").removeClass("has-error has-feedback");
+                $("label[for='Error']").remove();
+                $("span[for='Error']").remove();
+
+            }else{
+                $("#address-bar").addClass("has-error has-feedback");
+                $("#addressSide").before("<label for= 'Error' class='control-label sr-only' for='inputSuccess5'>Hidden label</label>");
+                $("#addressSide").after("<span for= 'Error' class='glyphicon glyphicon-remove form-control-feedback'></span>");
+            }
+        } else{
+            searchPlace(address, "address-bar");
+        }   
 
     }
 
@@ -295,33 +344,17 @@
          else return true;
     }
 
-    function addressHandle(address){
-
-        address = address.trim();
-        while(address.indexOf("  ") != -1) address = address.replace("  ", " ");
-        
-        var lat = parseFloat(address.split(" ")[0]);
-        var lon = parseFloat(address.split(" ")[1]);
-
-        
-        if (!isNaN(lat) && !isNaN(lon)){
-            if(latitudeCheck(lat) && longitudeCheck(lon)){
-                locationHandle(lat, lon);    
-                return true;
-            }else{
-                return false;
-            }
-            
-        } else {
+   /* function addressHandle(address){
             var itens = searchPlace(address);
             return true;
-        }       
-    }
+            
+    }*/
 
     function decodeHandle(code){
         var address = decode(code);
         var lat = parseFloat(address.split(" ")[0]);
         var lon = parseFloat(address.split(" ")[1]);
+        //console.log(lat + " "+ lon); 
         locationHandle(lat, lon);
     }
 
