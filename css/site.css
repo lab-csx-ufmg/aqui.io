@@ -536,3 +536,7 @@ body {
 }
 
 
+.has-feedback label.sr-only~.form-control-feedback{
+	margin-right: 40px;
+}
+
