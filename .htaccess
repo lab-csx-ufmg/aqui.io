@@ -6,3 +6,6 @@ RewriteCond %{SCRIPT_FILENAME} !-f
 
 RewriteRule ([A-Za-z0-9]+)$ ./decode.html?code=$1
 
+
+#RewriteCond %{HTTP_HOST} ^(www\.)?domain2\.com$ [NC]
+#RewriteRule !^subdir/ /subdir%{REQUEST_URI} [L,NC]

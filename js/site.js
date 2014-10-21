@@ -411,6 +411,7 @@
         if($("#page-header").length <= 0){
             var sPageURL = document.URL;
             var code = sPageURL.split('AQUI.io/')[1];
+            console.log(code);
             decodeHandle(code);
         }   
 
