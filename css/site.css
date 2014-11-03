@@ -134,7 +134,7 @@ body {
 }
 
 #map-canvas {
-	height: 500px;
+	height: 560px;
 	width: 100%;
 	margin-top: 55px;
 }
@@ -538,5 +538,19 @@ body {
 
 .has-feedback label.sr-only~.form-control-feedback{
 	margin-right: 40px;
+}
+
+#label-places-sought{
+	width: 80%; 
+	margin-top: 20px;
+    /*margin-left: 640px;*/
+    font-size: small;
+    /*position: relative;*/
+    text-align: left;
+    font-weight: bold;
+   
+    /*width: 350px;*/
+    /*height: 20px*/
+
 }
 

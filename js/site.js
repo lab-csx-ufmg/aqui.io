@@ -3,46 +3,85 @@
 
     function setCookie(code) {
 
-        document.cookie = code +"=" + "code" + "; path=/AQUI.io" ;
+        document.cookie = code +"=" + "code" + ";" ;
 
         console.log(document.cookie);
 
-        if($("#places-sought-shortener-url").length > 0 || $("#label-places-sought").length > 0){
+        /*if($("#places-sought-shortener-url").length > 0 || $("#label-places-sought").length > 0){
             $("#places-sought-shortener-url").remove();
             $("#label-places-sought").remove();
             //returnListPlaces();
         } else{
             //returnListPlaces();
-        }
-    }
+        }*/
+        returnListPlaces();
 
-  
+    }    
 
     function returnListPlaces() {
         var items = "";
         var places = document.cookie.split(";");
-        var labelurl = "<div id = 'label-places-sought'>Places... :</div>";
+        var labelurl = "<div id = 'label-places-sought'>Last ten places... :</div>";
         var type;
+        var total = 10;
+        var identifier = 1;
+        var totalItemsPags = 6;
         if (places.length > 0){
 
             items = "<div id = 'listPlaces'>";
             for (var i = 0 ; i < places.length ; i++){
                 code = places[i].split("=")[0].replace(" ", "");
                 type = places[i].split("=")[1];
-                console.log("code::" + code);
-                if (type == "code") {
-                    items += "<div id = 'places-sought-shortener-url'><div id= 'shortener-text' class = 'url'><a href='http://localhost/AQUI.io/" + code +"'\"><h3> http://aqui.io/" + code +"</h3></a></div></div>";;    
+                console.log("code:" + code);
+                if (type == "code" && identifier < 10) {
+                    if(identifier > totalItemsPags )items += "<div id= 'item-place"+ identifier + "' class='panel panel-default' hidden = 'true'>";
+                    else items += "<div id= 'item-place"+ identifier + "' class='panel panel-default'";
+                    items += "<div id= 'item-place"+ identifier + "' class='panel panel-default'>";
+                    items += "<div class='panel-body alert alert-info'>";
+                    items += "<div class='row'>";
+                    items += "<div id = 'balloon-place' class='col-xs-1 col-sm-1 '><img src='http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + identifier + "|0099FF|000000'/></div>";
+                    items += "<div id = 'item-place' class='col-xs-11 col-sm-11'><a href='http://aqui.io/"+code+"'\">http://aqui.io/"+code+"</a></div>";
+                    items += "</div></div></div>";
+                    identifier++;
                 }
             } 
             items += "</div>";
-            $("#column-search").append(labelurl);
-            $("#column-search").append(items);
+
+
+            if($("#label-places-sought").length > 0) {
+                $("#label-places-sought").replaceWith(labelurl);
+                $("#column-search").append(items);
+            }
+            else{
+                $("#column-search").append(labelurl);
+                $("#column-search").append(items);    
+            }
+             if(identifier > totalItemsPags){
+                paginationHandle(identifier, totalItemsPags);
+            }
         }
     }
 
 
+    function selectText(element) 
+    {
+        var doc = document, text = doc.getElementById(element), range, selection;    
+        if (doc.body.createTextRange) {
+            range = document.body.createTextRange();
+            range.moveToElementText(text);
+            range.select();
+        } 
+        else if (window.getSelection) 
+        {
+            selection = window.getSelection();        
+            range = document.createRange();
+            range.selectNodeContents(text);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
 
-    function selectText(divID) //divID contains actual id of ‘div’ element
+   /* function selectText(divID) //divID contains actual id of ‘div’ element
     {
         var textC=document.getElementById(divID);
         if (document.selection)
@@ -61,14 +100,14 @@
             window.getSelection().addRange(div);
             //alert(div.value);
         }
-    }
+    }*/
 
     function initialize(lat, lon)
     {
         var myCenter = new google.maps.LatLng(parseFloat(lat), parseFloat(lon));
         var mapProp = {
           center:myCenter,
-          zoom:5,
+          zoom:15,
           mapTypeId:google.maps.MapTypeId.ROADMAP
           };
 
@@ -104,7 +143,7 @@
 
     function searchPlace(place, btn) {
 
-        var totalItems = 6;
+        var totalItemsPags = 6;
         var service;
         var items = ""; 
         var pagination = "";
@@ -130,11 +169,11 @@
 
                 for (var i = 0; i < results.length; i++) {
                         var place = results[i];
-                        if(i < totalItems){ 
-                            items += createListPlaces(i, results[i], true);                    
+                        if(i < totalItemsPags){ 
+                            items += createListPlace(i, results[i], true);                    
                             
                         }    
-                        else items += createListPlaces(i, results[i], false);                    
+                        else items += createListPlace(i, results[i], false);                    
                     createMarker(results[i], map, i+1);    
                 }     
                 map.setCenter(results[0].geometry.location);
@@ -147,8 +186,8 @@
 
             }
             
-            if(results.length > totalItems){
-                paginationHandle(results, totalItems);
+            if(results.length > totalItemsPags){
+                paginationHandle(results.length, totalItemsPags);
             }
             if(results.length > 0){
                 if(btn == "address-header"){                    
@@ -161,7 +200,6 @@
                     $("label[for='Error']").remove();
                     $("span[for='Error']").remove();
                 }
-                console.log(btn);
             }else{
                 if(btn == "address-header"){
                     $("#address-header").addClass("has-error has-feedback");
@@ -179,10 +217,10 @@
         
     }
 
-    function paginationHandle(results, totalItems){
+    function paginationHandle(totalItems, totalItemsPags){
         var pagination = "";
         pagination = "<ul id='pagination-demo' class='pagination pagination-sm'>";
-        pags = Math.ceil(results.length / totalItems);
+        pags = Math.ceil(totalItems / totalItemsPags);
         for(var i = 0 ; i < pags ; i++) pagination += "<li><a href='#'>"+(i+1)+"</a></li>";
         pagination += "</lu>";
 
@@ -194,13 +232,13 @@
 
         $('#pagination-demo').twbsPagination({
             totalPages: pags,
-            visiblePages: 2,
+            visiblePages: 3,
             onPageClick: function (event, page) {
 
-                for(var i = 0 ; i < pags*totalItems ; i++){
+                for(var i = 0 ; i < pags*totalItemsPags ; i++){
                     var item = '#item-place' + i;
                     if($(item).length > 0){
-                        if((i >= totalItems * (page - 1)) && i < (totalItems * page)){
+                        if((i >= totalItemsPags * (page - 1)) && i < (totalItemsPags * page)){
                             $(item).show();
                         } else {
                             $(item).hide();
@@ -211,7 +249,7 @@
         });
     }
 
-    function createListPlaces(identifier, result, visibility){
+    function createListPlace(identifier, result, visibility){
         var item = "";
         if(!visibility) item += "<div id= 'item-place"+ identifier + "' class='panel panel-default' hidden = 'true'>";
         else item += "<div id= 'item-place"+ identifier + "' class='panel panel-default'>";
@@ -246,7 +284,6 @@
         var lon = longitude;
         var result = new Array();
         encode(lat, lon, ANYSRID, 3, 4326, result);
-        console.log("locationHandle");
 
         var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
         var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
@@ -290,6 +327,7 @@
                 locationHandle(lat, lon);
                 $("#page-header").hide();
                 $("#row-search").show();
+                selectText("shortener-text");
 
                 $("#address-header").removeClass("has-error has-feedback");
                 $("label[for='Error']").remove();
@@ -318,6 +356,7 @@
          if (!isNaN(lat) && !isNaN(lon)){
             if(latitudeCheck(lat) && longitudeCheck(lon)){
                 locationHandle(lat, lon);
+                selectText("shortener-text");
 
                 $("#address-bar").removeClass("has-error has-feedback");
                 $("label[for='Error']").remove();
@@ -344,18 +383,34 @@
          else return true;
     }
 
-   /* function addressHandle(address){
-            var itens = searchPlace(address);
-            return true;
-            
-    }*/
-
     function decodeHandle(code){
         var address = decode(code);
         var lat = parseFloat(address.split(" ")[0]);
         var lon = parseFloat(address.split(" ")[1]);
-        //console.log(lat + " "+ lon); 
-        locationHandle(lat, lon);
+        
+        //locationHandle(lat, lon);
+
+        var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
+        var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + code +"</h3></div></div>";
+
+        if ($('#listPlaces').length > 0){ 
+            $("#listPlaces").remove();    
+        }
+
+        if($("#label-shortener-url").length > 0) $("#label-shortener-url").replaceWith(labelurl);
+        else $("#column-search").append(labelurl);
+
+        if($("#shortener-url").length > 0) $("#shortener-url").replaceWith(shortenerurl);
+        else $("#column-search").append(shortenerurl);
+
+        if($('#pagination-demo').length > 0){
+            $('#pagination-demo').remove();
+        }
+
+        $("#addressSide").val(lat + " " + lon);       
+        initialize(lat, lon);
+        selectText("shortener-text");
+        setCookie(code);
     }
 
 
@@ -386,11 +441,7 @@
         if(navigator.geolocation) {
             divYourLocation();
         } 
-       
-        // $("#id-my-location").click(function(){
-        //     yourLocation();
-            
-        // });
+
 
         $("#btnSearchSide").click(function(){
             sideAddressHandle();
@@ -411,8 +462,6 @@
         if($("#page-header").length <= 0){
             var sPageURL = document.URL;
             var code = sPageURL.split('AQUI.io/')[1];
-            console.log(code);
             decodeHandle(code);
         }   
-
     });
