@@ -18,6 +18,8 @@
 
     }    
 
+    
+
     function returnListPlaces() {
         var items = "";
         var places = document.cookie.split(";");
@@ -34,13 +36,12 @@
                 type = places[i].split("=")[1];
                 console.log("code:" + code);
                 if (type == "code" && identifier < 10) {
-                    if(identifier > totalItemsPags )items += "<div id= 'item-place"+ identifier + "' class='panel panel-default' hidden = 'true'>";
-                    else items += "<div id= 'item-place"+ identifier + "' class='panel panel-default'";
-                    items += "<div id= 'item-place"+ identifier + "' class='panel panel-default'>";
+                    if(identifier > totalItemsPags)items += "<div id= 'item-place"+ identifier + "' class='panel panel-default' hidden = 'true'>";
+                    else items += "<div id= 'item-place"+ identifier + "' class='panel panel-default'>";
                     items += "<div class='panel-body alert alert-info'>";
                     items += "<div class='row'>";
-                    items += "<div id = 'balloon-place' class='col-xs-1 col-sm-1 '><img src='http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + identifier + "|0099FF|000000'/></div>";
-                    items += "<div id = 'item-place' class='col-xs-11 col-sm-11'><a href='http://aqui.io/"+code+"'\">http://aqui.io/"+code+"</a></div>";
+                    items += "<div id = 'balloon-place' class='col-xs-1 col-sm-1 '><img src='http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|0099FF|000000'/></div>";
+                    items += "<div id = 'item-place' class='col-xs-11 col-sm-11'><a href='http://aqui.io/"+code+"'>http://aqui.io/"+ code +"</a></div>";
                     items += "</div></div></div>";
                     identifier++;
                 }
@@ -332,8 +333,6 @@
                 $("#address-header").removeClass("has-error has-feedback");
                 $("label[for='Error']").remove();
                 $("span[for='Error']").remove();
-
-
             }else{
                 $("#address-header").addClass("has-error has-feedback");
                 $("#addressTop").before("<label For ='Error' class='control-label sr-only' for='inputSuccess5'>Hidden label</label>");
