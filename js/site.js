@@ -3,9 +3,9 @@
 
     function setCookie(code) {
 
-        document.cookie = code +"=" + "code" + ";" ;
+        document.cookie = code +"=" + "code" + "; path=/" ;
 
-        console.log(document.cookie);
+        //console.log(document.cookie);
 
         /*if($("#places-sought-shortener-url").length > 0 || $("#label-places-sought").length > 0){
             $("#places-sought-shortener-url").remove();
@@ -23,29 +23,41 @@
     function returnListPlaces() {
         var items = "";
         var places = document.cookie.split(";");
-        var labelurl = "<div id = 'label-places-sought'>Last ten places... :</div>";
+        var labelurl = "<div id = 'label-places-sought'>Your last places ... :</div>";
         var type;
         var total = 10;
         var identifier = 1;
-        var totalItemsPags = 6;
+        var totalItemsPags = 7;
+        var address, lat, lon;
+        var codes = new Array();
         if (places.length > 0){
 
             items = "<div id = 'listPlaces'>";
-            for (var i = 0 ; i < places.length ; i++){
+            for (var i = 0, j=0 ; i < places.length ; i++){
                 code = places[i].split("=")[0].replace(" ", "");
                 type = places[i].split("=")[1];
-                console.log("code:" + code);
-                if (type == "code" && identifier < 10) {
-                    if(identifier > totalItemsPags)items += "<div id= 'item-place"+ identifier + "' class='panel panel-default' hidden = 'true'>";
+                //console.log("code:" + code);
+                if(type == "code"){
+                  codes[j] = code;
+                  j++;
+                } 
+            } 
+
+            for(var i = codes.length -1 ; i >= 0 && identifier <= 10; i--){
+                    address = decode(codes[i]);
+                    //console.log(codes[i]);
+                    lat = parseFloat(address.split(" ")[0]);
+                    lon = parseFloat(address.split(" ")[1]);
+        
+                    if(identifier >= totalItemsPags)items += "<div id= 'item-place"+ identifier + "' class='panel panel-default' hidden = 'true'>";
                     else items += "<div id= 'item-place"+ identifier + "' class='panel panel-default'>";
                     items += "<div class='panel-body alert alert-info'>";
                     items += "<div class='row'>";
                     items += "<div id = 'balloon-place' class='col-xs-1 col-sm-1 '><img src='http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|0099FF|000000'/></div>";
-                    items += "<div id = 'item-place' class='col-xs-11 col-sm-11'><a href='http://aqui.io/"+code+"'>http://aqui.io/"+ code +"</a></div>";
+                    items += "<div id = 'item-place' class='col-xs-11 col-sm-11'><strong>Lat: "+lat+" Lon: "+lon+"<br><a href='http://aqui.io/"+codes[i]+"'>http://aqui.io/"+ codes[i] +"</a></strong></div>";
                     items += "</div></div></div>";
-                    identifier++;
-                }
-            } 
+                    identifier++;       
+            }
             items += "</div>";
 
 
