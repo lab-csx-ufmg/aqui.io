@@ -132,10 +132,7 @@
             selecting = false;
         }
 
-
         var map = new google.maps.Map(document.getElementById("map-canvas"),mapProp);
-
-       
 
         var marker = new google.maps.Marker({
           position:myCenter,
@@ -149,12 +146,14 @@
             var latLng = e.latLng;
             //console.log(latLng);
             //console.log(latLng.k);    
+            map.zoom = map.getZoom();
+            console.log(map.zoom);
             sideAddressHandle(latLng);
             
         });
-        google.maps.event.addListener(map, 'zoom_changed', function() {
+        /*google.maps.event.addListener(map, 'zoom_changed', function() {
             map.zoom = map.getZoom();
-        });  
+        });*/  
     }
 
     function cleanForSearchPlace(){

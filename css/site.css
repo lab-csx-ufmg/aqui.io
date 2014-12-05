@@ -454,7 +454,19 @@ body {
    
     /*width: 350px;*/
     /*height: 20px*/
-    
+}
+
+#from-map {
+	width: 100%; 
+	margin-top: 20px;
+    /*margin-left: 640px;*/
+    font-size: small;
+    /*position: relative;*/
+    text-align: center;
+    font-weight: bold;
+    /*color: #31708f;*/
+    /*width: 350px;*/
+    /*height: 20px*/
 }
 
 .theme-dropdown .dropdown-menu {
