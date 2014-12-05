@@ -124,13 +124,37 @@
           mapTypeId:google.maps.MapTypeId.ROADMAP
           };
 
+        window.onkeydown = function(e) {
+            selecting = ((e.keyIdentifier == 'Control') || (e.ctrlKey == true));
+        }
+
+        window.onkeyup = function(e) {
+            selecting = false;
+        }
+
+
         var map = new google.maps.Map(document.getElementById("map-canvas"),mapProp);
+
+       
 
         var marker = new google.maps.Marker({
           position:myCenter,
           });
 
         marker.setMap(map);
+        google.maps.event.addListener(map, "click", function (e) {
+
+            if (!selecting) return;
+            //lat and lng is available in e object
+            var latLng = e.latLng;
+            //console.log(latLng);
+            //console.log(latLng.k);    
+            sideAddressHandle(latLng);
+            
+        });
+        google.maps.event.addListener(map, 'zoom_changed', function() {
+            map.zoom = map.getZoom();
+        });  
     }
 
     function cleanForSearchPlace(){
@@ -192,7 +216,14 @@
                 map.setCenter(results[0].geometry.location);
                 items+="</div>";
                 labelurl = "<div id = 'label-shortener-url'>Choose your place below:</div>";            
-            
+                google.maps.event.addListener(map, "click", function (e) {
+                    //lat and lng is available in e object
+                    var latLng = e.latLng;
+                    console.log(latLng);
+                    if (evt.ctrlKey){
+                        console.log(latLng);    
+                    }
+                });
             
                 $("#column-search").append(labelurl);
                 $("#column-search").append(items);
@@ -208,7 +239,6 @@
                     $("label[for='Error']").remove();
                     $("span[for='Error']").remove();
                 }else{
-                    console.log("removeError");
                     $("#address-bar").removeClass("has-error has-feedback");
                     $("label[for='Error']").remove();
                     $("span[for='Error']").remove();
@@ -355,14 +385,20 @@
         }   
     }
 
-    function sideAddressHandle () {
-        var address = $("#addressSide").val();
+    function sideAddressHandle(latLng) {
+        var lat; 
+        var lon;
+        if(latLng == null) {
+            var address = $("#addressSide").val();
+            address = address.trim();
+            while(address.indexOf("  ") != -1) address = address.replace("  ", " ");
 
-        address = address.trim();
-        while(address.indexOf("  ") != -1) address = address.replace("  ", " ");
-        
-        var lat = parseFloat(address.split(" ")[0]);
-        var lon = parseFloat(address.split(" ")[1]);
+            lat = parseFloat(address.split(" ")[0]);
+            lon = parseFloat(address.split(" ")[1]);
+        }else{
+            lat = parseFloat(latLng.k);
+            lon = parseFloat(latLng.B);
+        }
 
          if (!isNaN(lat) && !isNaN(lon)){
             if(latitudeCheck(lat) && longitudeCheck(lon)){
@@ -381,7 +417,6 @@
         } else{
             searchPlace(address, "address-bar");
         }   
-
     }
 
     function latitudeCheck(lat){
@@ -466,7 +501,7 @@
         $("#addressSide").keypress(function(e){
             if(e.keyCode == 13)
             {
-                 sideAddressHandle();
+                 sideAddressHandle(null);
             }
         }); 
 
