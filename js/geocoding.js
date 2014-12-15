@@ -339,7 +339,7 @@ function encode(lat_or_N, lon_or_E, sys, precision, SRID, result){
     else if (sys == 2) return encodeUTM(lat_or_N, lon_or_E, precision, SRID, result);
 
     return 1;
-
+//encode(lat, lon, ANYSRID, 0, 4326, result);
 }
 
 function decode(code){

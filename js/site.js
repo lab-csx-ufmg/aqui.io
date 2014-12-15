@@ -372,24 +372,24 @@
         var lon = longitude;
         var result = new Array();
         if(zoom == null){
-            encode(lat, lon, ANYSRID, 3, 4326, result);  
+            encode(lat, lon, ANYSRID, 1, 4326, result);  
         } else {
-            if(zoom > 0 && zoom <= 4){
+            if(zoom > 0 && zoom <= 7){
                 encode(lat, lon, ANYSRID, 3, 4326, result);  
                 console.log("zoom: " + zoom + " precision: " + 3); 
+                console.log("encode(lat, lon, ANYSRID, 3, 4326, result);"); 
             } 
-            else if (zoom > 4 && zoom <= 9) {
+            else if (zoom > 8 && zoom <= 14) {
                 encode(lat, lon, ANYSRID, 2, 4326, result);
                 console.log("zoom: " + zoom + " precision: " + 2);
+                console.log("encode(lat, lon, ANYSRID, 2, 4326, result);");
             }    
-            else if (zoom > 9 && zoom <= 14){
+            else {
                 encode(lat, lon, ANYSRID, 1, 4326, result);
                 console.log("zoom: " + zoom + " precision: " + 1);
+                console.log("encode(lat, lon, ANYSRID, 1, 4326, result);");
             }
-            else {
-                encode(lat, lon, ANYSRID, 0, 4326, result);
-                console.log("zoom: " + zoom + " precision: " + 0);
-            }   
+            
         }
 
         var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
