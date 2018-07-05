@@ -115,14 +115,36 @@
         }
     }*/
 
-    function initialize(lat, lon)
+    function initialize(lat, lon, zoom_p)
     {
+        
+        //var mapProp;
         var myCenter = new google.maps.LatLng(parseFloat(lat), parseFloat(lon));
-        var mapProp = {
-          center:myCenter,
-          zoom:15,
-          mapTypeId:google.maps.MapTypeId.ROADMAP
+        //console.log("aqui");
+        //console.log(lon);
+
+        if(zoom_p != null) {
+            mapProp = {
+            center:myCenter,    
+            zoom:zoom_p,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
           };
+        }else{
+            mapProp = {
+            center:myCenter,
+            zoom:15,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+          };
+        }
+    
+
+        window.onkeydown = function(e) {
+            selecting = ((e.keyIdentifier == 'Control') || (e.ctrlKey == true));
+        }
+
+        window.onkeyup = function(e) {
+            selecting = false;
+        }
 
         var map = new google.maps.Map(document.getElementById("map-canvas"),mapProp);
 
@@ -131,6 +153,53 @@
           });
 
         marker.setMap(map);
+        google.maps.event.addListener(map, "click", function (e) {
+
+            if (!selecting) return;
+            //lat and lng is available in e object
+            var latLng = e.latLng;
+            //console.log(latLng);
+            //console.log(latLng.k);    
+            
+            //console.log(map.zoom);
+            clickHandle(latLng, map.getZoom());
+            
+        });
+        /*map.setContextMenu({
+          control: 'map',
+          options: [{
+            title: 'Add marker',
+            name: 'add_marker',
+            action: function(e) {
+              this.addMarker({
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng(),
+                title: 'New marker'
+              });
+            }
+          }, {
+            title: 'Center here',
+            name: 'center_here',
+            action: function(e) {
+              this.setCenter(e.latLng.lat(), e.latLng.lng());
+            }
+          }]
+        });*/
+    }
+
+    function clickHandle(latLng, zoom) {
+        var lat; 
+        var lon;
+       
+        lat = parseFloat(latLng.lat());
+        lon = parseFloat(latLng.lng());
+       
+        locationHandle(lat, lon, zoom);
+        selectText("shortener-text");
+
+        $("#address-bar").removeClass("has-error has-feedback");
+        $("label[for='Error']").remove();
+        $("span[for='Error']").remove();
     }
 
     function cleanForSearchPlace(){
@@ -192,7 +261,14 @@
                 map.setCenter(results[0].geometry.location);
                 items+="</div>";
                 labelurl = "<div id = 'label-shortener-url'>Choose your place below:</div>";            
-            
+                google.maps.event.addListener(map, "click", function (e) {
+                    //lat and lng is available in e object
+                    var latLng = e.latLng;
+                    console.log(latLng);
+                    if (evt.ctrlKey){
+                        console.log(latLng);    
+                    }
+                });
             
                 $("#column-search").append(labelurl);
                 $("#column-search").append(items);
@@ -208,7 +284,6 @@
                     $("label[for='Error']").remove();
                     $("span[for='Error']").remove();
                 }else{
-                    console.log("removeError");
                     $("#address-bar").removeClass("has-error has-feedback");
                     $("label[for='Error']").remove();
                     $("span[for='Error']").remove();
@@ -287,16 +362,35 @@
 
     function listPlacesHandle(latitude, longitude) {
         $("#listPlaces").hide();
-        locationHandle(latitude, longitude);
+        locationHandle(latitude, longitude, null);
     }
 
 
-    function locationHandle(latitude, longitude) {
+    function locationHandle(latitude, longitude, zoom) {
 
         var lat = latitude;
         var lon = longitude;
         var result = new Array();
-        encode(lat, lon, ANYSRID, 3, 4326, result);
+        if(zoom == null){
+            encode(lat, lon, ANYSRID, 1, 4326, result);  
+        } else {
+            if(zoom > 0 && zoom <= 7){
+                encode(lat, lon, ANYSRID, 3, 4326, result);  
+                console.log("zoom: " + zoom + " precision: " + 3); 
+                console.log("encode(lat, lon, ANYSRID, 3, 4326, result);"); 
+            } 
+            else if (zoom > 8 && zoom <= 14) {
+                encode(lat, lon, ANYSRID, 2, 4326, result);
+                console.log("zoom: " + zoom + " precision: " + 2);
+                console.log("encode(lat, lon, ANYSRID, 2, 4326, result);");
+            }    
+            else {
+                encode(lat, lon, ANYSRID, 1, 4326, result);
+                console.log("zoom: " + zoom + " precision: " + 1);
+                console.log("encode(lat, lon, ANYSRID, 1, 4326, result);");
+            }
+            
+        }
 
         var labelurl = "<div id = 'label-shortener-url'>Click and press CTRL-C to copy</div>";
         var shortenerurl = "<div id = 'shortener-url'><div id= 'shortener-text' class = 'url'><h3 onclick=\"selectText('shortener-url');\"> http://aqui.io/" + result.join("") +"</h3></div></div>";
@@ -316,7 +410,7 @@
         }
 
         $("#addressSide").val(lat + " " + lon);       
-        initialize(lat, lon);
+        initialize(lat, lon, zoom);
         selectText("shortener-text");
         setCookie(result.join(""));
 
@@ -337,7 +431,7 @@
     
         if (!isNaN(lat) && !isNaN(lon)){
             if(latitudeCheck(lat) && longitudeCheck(lon)){
-                locationHandle(lat, lon);
+                locationHandle(lat, lon, null);
                 $("#page-header").hide();
                 $("#row-search").show();
                 selectText("shortener-text");
@@ -355,18 +449,24 @@
         }   
     }
 
-    function sideAddressHandle () {
-        var address = $("#addressSide").val();
+    function sideAddressHandle(latLng) {
+        var lat; 
+        var lon;
+        if(latLng == null) {
+            var address = $("#addressSide").val();
+            address = address.trim();
+            while(address.indexOf("  ") != -1) address = address.replace("  ", " ");
 
-        address = address.trim();
-        while(address.indexOf("  ") != -1) address = address.replace("  ", " ");
-        
-        var lat = parseFloat(address.split(" ")[0]);
-        var lon = parseFloat(address.split(" ")[1]);
+            lat = parseFloat(address.split(" ")[0]);
+            lon = parseFloat(address.split(" ")[1]);
+        }else{
+            lat = parseFloat(latLng.k);
+            lon = parseFloat(latLng.B);
+        }
 
          if (!isNaN(lat) && !isNaN(lon)){
             if(latitudeCheck(lat) && longitudeCheck(lon)){
-                locationHandle(lat, lon);
+                locationHandle(lat, lon, null);
                 selectText("shortener-text");
 
                 $("#address-bar").removeClass("has-error has-feedback");
@@ -381,7 +481,6 @@
         } else{
             searchPlace(address, "address-bar");
         }   
-
     }
 
     function latitudeCheck(lat){
@@ -419,7 +518,7 @@
         }
 
         $("#addressSide").val(lat + " " + lon);       
-        initialize(lat, lon);
+        initialize(lat, lon, null);
         selectText("shortener-text");
         setCookie(code);
     }
@@ -428,7 +527,7 @@
     function getPosition(position){
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
-        locationHandle(latitude, longitude);
+        locationHandle(latitude, longitude, null);
     }
     function yourLocation(){
         $("#page-header").hide();
@@ -466,7 +565,7 @@
         $("#addressSide").keypress(function(e){
             if(e.keyCode == 13)
             {
-                 sideAddressHandle();
+                 sideAddressHandle(null);
             }
         }); 
 
